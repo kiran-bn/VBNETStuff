@@ -1,0 +1,256 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Management
+</name>
+</assembly>
+<members>
+<member name="P:Management.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:Management.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="P:Management.My.Resources.Resources.loading">
+	<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member><member name="T:Management.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="T:Management.data_aioDataSet.aio_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc1_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc2_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc3_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc4_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc5_tableDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_dataDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_data1DataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_data2DataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.combo_box_SessionDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.combobox_batchDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.aio_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc1_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc2_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc3_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc4_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc5_tableRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_dataRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_data1Row">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_data2Row">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.combo_box_SessionRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.combobox_batchRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:Management.data_aioDataSet.aio_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc1_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc2_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc3_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc4_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.mc5_tableRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_dataRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_data1RowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.users_data2RowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.combo_box_SessionRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet.combobox_batchRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:Management.data_aioDataSet">
+	<summary>
+Represents a strongly typed in-memory cache of data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.aio_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.mc_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.mc1_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.mc2_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.mc3_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.mc4_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.mc5_tableTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.users_dataTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.users_data1TableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.users_data2TableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.combo_box_SessionTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.combobox_batchTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="M:Management.data_aioDataSetTableAdapters.TableAdapterManager.UpdateUpdatedRows(Management.data_aioDataSet,System.Collections.Generic.List{System.Data.DataRow},System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Update rows in top-down order.
+</summary>
+</member><member name="M:Management.data_aioDataSetTableAdapters.TableAdapterManager.UpdateInsertedRows(Management.data_aioDataSet,System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Insert rows in top-down order.
+</summary>
+</member><member name="M:Management.data_aioDataSetTableAdapters.TableAdapterManager.UpdateDeletedRows(Management.data_aioDataSet,System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Delete rows in bottom-up order.
+</summary>
+</member><member name="M:Management.data_aioDataSetTableAdapters.TableAdapterManager.GetRealUpdatedRows(System.Data.DataRow[],System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Remove inserted rows that become updated rows after calling TableAdapter.Update(inserted rows) first
+</summary>
+</member><member name="M:Management.data_aioDataSetTableAdapters.TableAdapterManager.UpdateAll(Management.data_aioDataSet)">
+	<summary>
+Update all changes to the dataset.
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.TableAdapterManager.UpdateOrderOption">
+	<summary>
+Update Order Option
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.TableAdapterManager.SelfReferenceComparer">
+	<summary>
+Used to sort self-referenced table's rows
+</summary>
+</member><member name="T:Management.data_aioDataSetTableAdapters.TableAdapterManager">
+	<summary>
+TableAdapterManager is used to coordinate TableAdapters in the dataset to enable Hierarchical Update scenarios
+</summary>
+</member>
+</members>
+</doc>

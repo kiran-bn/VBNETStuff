@@ -1,0 +1,97 @@
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.aio.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.aio_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.mc1.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.mc1_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.mc.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.mc_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.login.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.Resources.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.vbproj.GenerateResource.Cache
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.users.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.users_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.about.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.backup.resources
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.userlogin.resources
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Release\Management.exe.config
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Release\Management.exe.manifest
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Release\Management.application
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Release\Management.exe
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Release\Management.pdb
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Release\Management.xml
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management.TrustInfo.xml
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management.exe.manifest
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management.application
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management.exe
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management.xml
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Release\Management.pdb
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\bin\Release\MetroFramework.dll
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.combobox.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Release\Management1.combobox_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\bin\Release\Management.exe.config
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.vbprojResolveAssemblyReference.cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.about.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.aio.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.aio_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.backup.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.combobox.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.combobox_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.mc1.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.mc1_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.mc.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.mc_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.login.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.Resources.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.userlogin.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.users.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.users_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management1\Management1\obj\x86\Release\Management1.vbproj.GenerateResource.Cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Release\Management.exe.config
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Release\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Release\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Release\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.vbprojResolveAssemblyReference.cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.about.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.aio.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.aio_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.backup.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.combobox.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.combobox_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.mc1.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.mc1_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.mc.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.mc_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.login.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.Resources.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.userlogin.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.users.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.users_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Release\Management1.vbproj.GenerateResource.Cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Release\Management.exe.config
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Release\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Release\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Release\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management1.vbprojResolveAssemblyReference.cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management1.vbproj.GenerateResource.Cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.about.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.backup.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.login.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Resources.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.users.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.users_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.users_admin_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Table1.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Table1_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Table3.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Table3_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Table2.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.Table2_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Release\Management.edit_list.resources

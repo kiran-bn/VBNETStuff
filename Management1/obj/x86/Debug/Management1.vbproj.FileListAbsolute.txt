@@ -1,0 +1,86 @@
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\bin\Debug\Management1.exe
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\bin\Debug\Management1.pdb
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\bin\Debug\Management1.xml
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.login.resources
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.Resources.resources
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.vbproj.GenerateResource.Cache
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.exe
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.xml
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.pdb
+C:\Users\AliAhmad\AppData\Local\Temporary Projects\Management1\obj\x86\Debug\Management1.aio.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.aio.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.aio_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.login.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.Resources.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.vbproj.GenerateResource.Cache
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.mc1.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.mc1_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.mc.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.mc_add.resources
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.users.resources
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.users_add.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.about.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.backup.resources
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.userlogin.resources
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Debug\Management.exe.config
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Debug\Management.exe.manifest
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Debug\Management.application
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Debug\Management.exe
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Debug\Management.pdb
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\bin\Debug\Management.xml
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management.TrustInfo.xml
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management.exe.manifest
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management.application
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management.exe
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management.xml
+C:\Users\AliAhmad\Documents\Visual Studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management.pdb
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\bin\Debug\MetroFramework.dll
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.combobox.resources
+C:\Users\AliAhmad\documents\visual studio 2010\Projects\Management1\Management1\obj\x86\Debug\Management1.combobox_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Debug\Management.exe.config
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Debug\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Debug\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\bin\Debug\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.vbprojResolveAssemblyReference.cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.about.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.aio.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.aio_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.backup.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.combobox.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.combobox_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.mc1.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.mc1_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.mc.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.mc_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.login.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.Resources.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.userlogin.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.users.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.users_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management1.vbproj.GenerateResource.Cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\Projects\TO BE CONTINUED\Management11\Management11\Management1\obj\x86\Debug\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Debug\Management.exe.config
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Debug\Management.exe
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Debug\Management.pdb
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\bin\Debug\Management.xml
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management1.vbprojResolveAssemblyReference.cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.about.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.backup.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.login.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Resources.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.users.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.users_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management1.vbproj.GenerateResource.Cache
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.users_admin_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Table1.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Table1_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Table3.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Table3_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Table2.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.Table2_add.resources
+C:\Users\Ali Ahmad\Documents\Visual Studio 2010\PROJECTS 2017\Management11\Management1\obj\x86\Debug\Management.edit_list.resources

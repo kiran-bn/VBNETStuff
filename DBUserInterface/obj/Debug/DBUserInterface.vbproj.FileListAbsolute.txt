@@ -1,0 +1,12 @@
+F:\VB.NET Project\DBUserInterface\DBUserInterface\bin\Debug\DBUserInterface.exe.config
+F:\VB.NET Project\DBUserInterface\DBUserInterface\bin\Debug\DBUserInterface.exe
+F:\VB.NET Project\DBUserInterface\DBUserInterface\bin\Debug\DBUserInterface.pdb
+F:\VB.NET Project\DBUserInterface\DBUserInterface\bin\Debug\DBUserInterface.xml
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.vbprojAssemblyReference.cache
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.Form1.resources
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.Resources.resources
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.vbproj.GenerateResource.cache
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.vbproj.CoreCompileInputs.cache
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.exe
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.xml
+F:\VB.NET Project\DBUserInterface\DBUserInterface\obj\Debug\DBUserInterface.pdb

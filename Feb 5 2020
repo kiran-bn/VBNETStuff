@@ -1,0 +1,1891 @@
+Imports System.IO
+Imports System.Data.OleDb
+Imports Microsoft.Office.Interop
+Public Class ERAdmin
+    Inherits System.Windows.Forms.Form
+    Public CountrySel As CountrySelector
+    Dim sSqlQry As String
+    Private Sub ERAdmin_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Try
+
+            GlobalVariables.PROGVER = "0.03"
+            countryLabel.Text = GlobalVariables.COUNTRY
+            GlobalVariables.DBPATHCOUNTRY = GlobalVariables.DBPATH & "\" & GlobalVariables.COUNTRY
+            Me.Text = "External Reporting Admin " & GlobalVariables.PROGVER & " (DEV)"
+            LoginIDLabel.Text = GlobalVariables.USERFULLNAME
+            For Each Dir As String In System.IO.Directory.GetDirectories(GlobalVariables.DBPATHCOUNTRY)
+                Dim dirInfo As New System.IO.DirectoryInfo(Dir)
+                ReportingYearComboBox.Items.Add(dirInfo.Name)
+            Next
+            ReportingYearComboBox.SelectedIndex = 0
+            GlobalVariables.CURRENTDB = GlobalVariables.DBPATHCOUNTRY & "\" & ReportingYearComboBox.Text
+
+            GlobalVariables.MASTERDB = GlobalVariables.CURRENTDB & "\ER BAU FATCA CRS MASTER.accdb"
+
+            GlobalVariables.WORKINGDB = GlobalVariables.CURRENTDB & "\ER BAU FATCA CRS WORKING.accdb"
+
+            connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+            fetchalldbusers()
+            paratypelistboxpopulate()
+            userlistboxpopulate()
+
+            loaddropdowns(GlobalVariables.CONN, NewUserTeamComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='TEAM_NAME'", False, False, False)
+            loaddropdowns(GlobalVariables.CONN, ExistingUserLocationComboBox, "Select PARAM_VALUE from CUSTOM_PARAMETERS WHERE PARAM_TYPE = 'LOCATION'", False, False, False)
+            loaddropdowns(GlobalVariables.CONN, NewUserLocationComboBox, "Select PARAM_VALUE from CUSTOM_PARAMETERS WHERE PARAM_TYPE = 'LOCATION'", False, False, False)
+            loaddropdowns(GlobalVariables.CONN, ExistingUserTeamTextBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='TEAM_NAME'", False, False, False)
+
+            loaddropdowns(GlobalVariables.CONN, IngestionFileTypeComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='FILE_TYPE' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, InitialFatcaClassComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='FATCA_CLASSIFICATION' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, InitialFatcaStatusComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='FATCA_STATUS' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, FinalFatcaClassComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='FATCA_CLASSIFICATION' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, FinalFatcaStatusComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='FATCA_STATUS' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, InitialCrsClassComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='CRS_CLASSIFICATION' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, FinalCrsClassComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='CRS_CLASSIFICATION' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, InitialCrsStatusComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='CRS_STATUS' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, FinalCrsStatusComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='CRS_STATUS' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, custTypeComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='CUSTOMER_TYPE' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, fatcaPreExComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='DECISION_FLAG' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, crsPreExComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='DECISION_FLAG' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, caseManagedComboBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='DECISION_FLAG' ORDER BY PARAM_VALUE", True, False, False)
+            loaddropdowns(GlobalVariables.CONN, AccessLevelComboBox2, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='ACCESS_LEVEL'", False, False, False)
+            loaddropdowns(GlobalVariables.CONN, CountryAccessComboBox2, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='COUNTRY'", False, False, False)
+            ValidationRefreshButton_Click()
+
+            disconnectFromDB(GlobalVariables.CONN)
+            'connectToDB(GlobalVariables.WORKINGDB, "MSAccess")
+
+
+
+        Catch ex As Exception
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox(ex.Message, vbInformation, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub GetIngestionFileCommandButton_Click(sender As Object, e As EventArgs) Handles GetIngestionFileCommandButton.Click
+        Dim LastDir As String
+        Dim i As Integer
+        Try
+            IngestionInputFileTextBox.Text = ""
+            OpenFileDialog1.Multiselect = True
+            OpenFileDialog1.Filter = "CSV Files|*.csv"
+            i = 1
+            If OpenFileDialog1.ShowDialog = Windows.Forms.DialogResult.OK Then
+                IngestionInputFileTextBox.Text = OpenFileDialog1.FileName
+                LastDir = Path.GetDirectoryName(OpenFileDialog1.FileName)
+                For Each mFile As String In OpenFileDialog1.FileNames
+                    If i <> 1 Then
+                        IngestionInputFileTextBox.Text = IngestionInputFileTextBox.Text & vbCrLf & mFile
+                    End If
+                    i = i + 1
+                Next
+            End If
+Done:
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbInformation, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub UploadIngestionCommandButton_Click(sender As Object, e As EventArgs) Handles UploadIngestionCommandButton.Click
+        Dim strarr() As String
+        Dim Temp As String
+        Dim directory As String
+        Dim cmd As OleDbCommand
+        Dim filepath As String
+        Dim reader As OleDbDataReader
+        Dim conn2 As Object
+        Dim tstamp As String
+
+        Try
+
+            Dim outFile As IO.StreamWriter = My.Computer.FileSystem.OpenTextFileWriter("FileList.csv", False)
+
+
+
+
+            tstamp = Format(Now, "dd_MMM_yyyy_hh_mm_ss")
+            If IngestionFileTypeComboBox.Text = "" Then
+                MsgBox("Please select a file type!", vbInformation, "ERROR")
+                GoTo Done
+            End If
+
+            If CRSIngestionCheckBox.Checked = False And FATCAIngestionCheckBox.Checked = False Then
+                MsgBox("Please select a File Classification !", vbInformation, "ERROR")
+                GoTo Done
+            End If
+
+            If IngestionInputFileTextBox.Text = "" Then
+                MsgBox("No files selected !", vbCritical, "ERROR")
+                GoTo Done
+            End If
+            outFile.WriteLine("FileType,FileClass,FilePath")
+            Temp = Replace(IngestionInputFileTextBox.Text, vbCrLf, ";")
+            MsgBox(Temp)
+            strarr = Temp.Split(";")
+            Dim i As Integer
+            i = 0
+            For Each s As String In strarr
+
+                If IngestionFileTypeComboBox.Text = "MIT File" Then
+                    If CRSIngestionCheckBox.Checked = True Then
+                        outFile.WriteLine("MIT,CRS," & Replace(s, vbCrLf, ""))
+                    ElseIf FATCAIngestionCheckBox.Checked = True Then
+                        outFile.WriteLine("MIT,FATCA," & Replace(s, vbCrLf, ""))
+                    End If
+                ElseIf IngestionFileTypeComboBox.Text = "Validation File" Then
+                    If CRSIngestionCheckBox.Checked = True Then
+                        outFile.WriteLine("VAL,CRS," & Replace(s, vbCrLf, ""))
+                    ElseIf FATCAIngestionCheckBox.Checked = True Then
+                        outFile.WriteLine("VAL,FATCA," & Replace(s, vbCrLf, ""))
+                    End If
+                End If
+            Next
+            outFile.Close()
+            Deployana()
+            Deployactivate()
+            'Shell("anatest.bat")
+            Dim p As New Process
+            Dim psi As New ProcessStartInfo("anatest.bat")
+            p.StartInfo = psi
+            p.Start()
+            p.WaitForExit()
+
+            My.Computer.FileSystem.DeleteFile("activatetest.bat",
+            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+            Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently,
+            Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing)
+            My.Computer.FileSystem.DeleteFile("anatest.bat",
+            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+            Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently,
+            Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing)
+            My.Computer.FileSystem.DeleteFile("FileList.csv",
+            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+            Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently,
+            Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing)
+
+            connectToDB(GlobalVariables.CONN, GlobalVariables.MASTERDB, "MSAccess")
+            sSqlQry = "Insert into VALIDATION_TRACKER_FATCA Select * From NewrowsFATCA"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            sSqlQry = "Delete * From NEW_FATCA"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            sSqlQry = "Insert into NEW_FATCA Select * From NewrowsFATCA"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            sSqlQry = "Delete FROM Deleted_FATCA  " &
+                    "WHERE EXISTS ( " &
+                    "Select  NEW_FATCA.Country, NEW_FATCA.ANZFIID, NEW_FATCA.Customer_Id, NEW_FATCA.Reporting_Year " &
+                    "FROM NEW_FATCA " &
+                    "WHERE Deleted_FATCA.Country = NEW_FATCA.Country  " &
+                    "AND Deleted_FATCA.ANZFIID = NEW_FATCA.ANZFIID  " &
+                    "AND Deleted_FATCA.Customer_Id = NEW_FATCA.Customer_Id  " &
+                    "AND Deleted_FATCA.Reporting_Year = NEW_FATCA.Reporting_Year ) "
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            sSqlQry = "Insert into DELETED_FATCA Select * From DeletedrowsFATCA"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            disconnectFromDB(GlobalVariables.CONN)
+            My.Computer.FileSystem.DeleteFile(GlobalVariables.CURRENTDB & "\FATCAInput.csv",
+            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+            Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently,
+            Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing)
+            'My.Computer.FileSystem.DeleteFile(GlobalVariables.CURRENTDB & "CRSInput.csv",
+            'Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+            'Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently,
+            'Microsoft.VisualBasic.FileIO.UICancelOption.DoNothing)
+            MsgBox("Done")
+
+
+
+Done:
+        Catch ex As Exception
+            'disconnectFromDB(conn2)
+            MsgBox(ex.Message, vbInformation, "Error")
+        End Try
+    End Sub
+
+
+
+    Private Sub FilterSearchButton_Click(sender As Object, e As EventArgs) Handles FilterSearchButton.Click
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Try
+            connectToDB(GlobalVariables.CONN, GlobalVariables.MASTERDB, "MSAccess")
+            sSqlQry = "Select Customer_Id, Country, ANZFIID, Case_ID, Customer_Type, Verbal_SC, FATCA_Pre_existing_New, " &
+                    " CRS_Pre_existing_New, KYC_Id, KYC_System, AH_Name, AH_Address, AH_DOB, Initial_FATCA_Classification, Initial_FATCA_Status, " &
+                     " Initial_FATCA_Tax_Country, Initial_FATCA_TIN_Number, Initial_CRS_Tax_Country1, Initial_CRS_Tax_Country2, Initial_CRS_Tax_Country3, " &
+                     " Initial_CRS_Tax_Country4, Initial_CRS_Tax_Country5, Initial_CRS_TIN_Number1, Initial_CRS_TIN_Number2,Initial_CRS_TIN_Number3, " &
+                     " Initial_CRS_TIN_Number4, Initial_CRS_TIN_Number5, Initial_CRS_Classification, Initial_CRS_Status, " &
+                     " Closed_Account_Flag, Final_FATCA_Classification, Final_FATCA_Status, Final_FATCA_Tax_Country, Final_FATCA_TIN_Number, " &
+                    " Final_CRS_Tax_Country1, Final_CRS_Tax_Country2, Final_CRS_Tax_Country3, Final_CRS_Tax_Country4, " &
+                    " Final_CRS_Tax_Country5, Final_CRS_TIN_Number1, Final_CRS_TIN_Number2, Final_CRS_TIN_Number3, " &
+                    " Final_CRS_TIN_Number4, Final_CRS_TIN_Number5, Final_CRS_Classification, Final_CRS_Status " &
+                    " from VALIDATION_TRACKER where "
+
+            If customerIDTextBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Customer_Id ='" & customerIDTextBox.Text & "' AND "
+            End If
+            If KYCIDTextBox.Text <> "" Then
+                sSqlQry = sSqlQry & "  KYC_Id ='" & KYCIDTextBox.Text & "' AND "
+            End If
+            If ANZFIDTextBox.Text <> "" Then
+                sSqlQry = sSqlQry & " ANZFIID ='" & ANZFIDTextBox.Text & "' AND "
+            End If
+            If InitialFatcaStatusComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Initial_FATCA_Status ='" & InitialFatcaStatusComboBox.Text & "' AND "
+            End If
+            If InitialFatcaClassComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Initial_FATCA_Classification ='" & InitialFatcaClassComboBox.Text & "' AND "
+            End If
+            If caseManagedComboBox.Text = "Y" Then
+                sSqlQry = sSqlQry & " Case_ID is not null AND "
+            End If
+            If caseManagedComboBox.Text = "N" Then
+                sSqlQry = sSqlQry & " Case_ID is null AND "
+            End If
+            If crsPreExComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " CRS_Pre_existing_New ='" & crsPreExComboBox.Text & "' AND "
+            End If
+            If fatcaPreExComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " FATCA_Pre_existing_New ='" & fatcaPreExComboBox.Text & "' AND "
+            End If
+            If custTypeComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Customer_Type ='" & custTypeComboBox.Text & "' AND "
+            End If
+            If FinalCrsStatusComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Final_CRS_Status ='" & FinalCrsStatusComboBox.Text & "' AND "
+            End If
+            If FinalCrsClassComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Final_CRS_Classification ='" & FinalCrsClassComboBox.Text & "' AND "
+            End If
+            If FinalFatcaStatusComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Final_FATCA_Status ='" & FinalFatcaStatusComboBox.Text & "' AND "
+            End If
+            If FinalFatcaClassComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Final_FATCA_Classification ='" & FinalFatcaClassComboBox.Text & "' AND "
+            End If
+            If InitialCrsStatusComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Initial_CRS_Status ='" & InitialCrsStatusComboBox.Text & "' AND "
+            End If
+            If InitialCrsClassComboBox.Text <> "" Then
+                sSqlQry = sSqlQry & " Initial_CRS_Classification ='" & InitialCrsClassComboBox.Text & "'"
+            End If
+            Dim str As String = sSqlQry.Substring(sSqlQry.Length - 4)
+            If str = "AND " Then
+                sSqlQry = sSqlQry.Substring(0, sSqlQry.Length - 4)
+            End If
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+            If reader.HasRows Then
+                validationTrackerListView.Items.Clear()
+                While reader.Read
+                    Dim lstItems As ListViewItem = validationTrackerListView.Items.Add(reader(0))
+                    If reader.IsDBNull(1) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(reader(1))
+                    End If
+                    For j = 2 To reader.FieldCount - 1
+                        If reader.IsDBNull(j) Then
+                            lstItems.SubItems.Add("")
+                        Else
+                            lstItems.SubItems.Add(reader(j))
+                        End If
+                    Next j
+                End While
+            Else
+                validationTrackerListView.Items.Clear()
+                cmd.Dispose()
+                MsgBox("No record found For this filter", vbInformation)
+            End If
+
+        Catch ex As Exception
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox("customerIDSearchButton_Click " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub resetButton_Click(sender As Object, e As EventArgs) Handles resetButton.Click
+        'validationTrackerListView.Items.Clear()
+        customerIDTextBox.Text = ""
+        InitialCrsClassComboBox.SelectedIndex = -1
+        InitialCrsStatusComboBox.SelectedIndex = -1
+        FinalFatcaClassComboBox.SelectedIndex = -1
+        FinalFatcaStatusComboBox.SelectedIndex = -1
+        FinalCrsClassComboBox.SelectedIndex = -1
+        FinalCrsStatusComboBox.SelectedIndex = -1
+        custTypeComboBox.SelectedIndex = -1
+        fatcaPreExComboBox.SelectedIndex = -1
+        crsPreExComboBox.SelectedIndex = -1
+        caseManagedComboBox.SelectedIndex = -1
+        InitialFatcaClassComboBox.SelectedIndex = -1
+        InitialFatcaStatusComboBox.SelectedIndex = -1
+
+        ANZFIDTextBox.Text = ""
+        KYCIDTextBox.Text = ""
+    End Sub
+
+    Private Sub ValidationRefreshButton_Click() Handles ValidationRefreshButton.Click
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Dim i As Integer
+        Dim numberOfPages As Integer
+        i = 0
+        Try
+            connectToDB(GlobalVariables.CONN, GlobalVariables.MASTERDB, "MSAccess")
+            validationTrackerListView.Clear()
+            validationTrackerListView.Columns.Add(text:="Customer ID", width:=80)
+            validationTrackerListView.Columns.Add(text:="Country", width:=80)
+            validationTrackerListView.Columns.Add(text:="ANZFIID", width:=80)
+            validationTrackerListView.Columns.Add(text:="Case ID", width:=80)
+            validationTrackerListView.Columns.Add(text:="Customer Type", width:=80)
+            validationTrackerListView.Columns.Add(text:="Verbal SC", width:=80)
+            validationTrackerListView.Columns.Add(text:="FATCA Pre Existing New", width:=80)
+            validationTrackerListView.Columns.Add(text:="CRS Pre Existing New", width:=80)
+            validationTrackerListView.Columns.Add(text:="KYC ID", width:=80)
+            validationTrackerListView.Columns.Add(text:="KYC System", width:=80)
+            validationTrackerListView.Columns.Add(text:="Account Holder Name", width:=80)
+            validationTrackerListView.Columns.Add(text:="Account Holder Address", width:=80)
+            validationTrackerListView.Columns.Add(text:="Account Holder Date of Birth", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial FATCA Classification", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial FATCA Status", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial FATCA Tax Country", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial FATCA TIN Number", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS Tax Country 1", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS Tax Country 2", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS Tax Country 3", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial_CRS_Tax_Country 4", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initialn CRS Tax Country 5", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS TIN Number 1", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS TIN Number 2", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS TIN Number 3", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS TIN Number 4", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS TIN Number 5", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS Classification", width:=80)
+            validationTrackerListView.Columns.Add(text:="Initial CRS Status", width:=80)
+            validationTrackerListView.Columns.Add(text:="Closed Account Flag", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final FATCA Classification", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final FATCA Status", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final FATCA Tax Country", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final FATCA TIN Number", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Tax Country 1", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Tax Country 2", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Tax Country 3", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Tax Country 4", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Tax Country 5", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS TIN Number 1", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS TIN Number 2", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS TIN Number 3", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS TIN Number 4", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS TIN Number 5", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Classification", width:=80)
+            validationTrackerListView.Columns.Add(text:="Final CRS Status", width:=80)
+
+            sSqlQry = "Select count(*) from VALIDATION_TRACKER"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            numberOfPages = cmd.ExecuteScalar
+            Dim s As String = numberOfPages / 50
+            If Decimal.TryParse(s, Nothing) Then
+                s = Math.Floor(Decimal.Parse(s)).ToString
+            End If
+            numberOfPages = numberOfPages / 50
+            cmd.Dispose()
+            sSqlQry = "Select Customer_Id, Country, ANZFIID, Case_ID, Customer_Type, Verbal_SC, FATCA_Pre_existing_New, " &
+                    " CRS_Pre_existing_New, KYC_Id, KYC_System, AH_Name, AH_Address, AH_DOB, Initial_FATCA_Classification, Initial_FATCA_Status, " &
+                     " Initial_FATCA_Tax_Country, Initial_FATCA_TIN_Number, Initial_CRS_Tax_Country1, Initial_CRS_Tax_Country2, Initial_CRS_Tax_Country3, " &
+                     " Initial_CRS_Tax_Country4, Initial_CRS_Tax_Country5, Initial_CRS_TIN_Number1, Initial_CRS_TIN_Number2,Initial_CRS_TIN_Number3, " &
+                     " Initial_CRS_TIN_Number4, Initial_CRS_TIN_Number5, Initial_CRS_Classification, Initial_CRS_Status, " &
+                     " Closed_Account_Flag, Final_FATCA_Classification, Final_FATCA_Status, Final_FATCA_Tax_Country, Final_FATCA_TIN_Number, " &
+                    " Final_CRS_Tax_Country1, Final_CRS_Tax_Country2, Final_CRS_Tax_Country3, Final_CRS_Tax_Country4, " &
+                    " Final_CRS_Tax_Country5, Final_CRS_TIN_Number1, Final_CRS_TIN_Number2, Final_CRS_TIN_Number3, " &
+                    " Final_CRS_TIN_Number4, Final_CRS_TIN_Number5, Final_CRS_Classification, Final_CRS_Status " &
+                    " from VALIDATION_TRACKER"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+            If reader.HasRows Then
+                While reader.Read
+                    Dim lstItems As ListViewItem = validationTrackerListView.Items.Add(reader(0))
+                    If reader.IsDBNull(1) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(reader(1))
+                    End If
+                    For j = 2 To reader.FieldCount - 1
+                        If reader.IsDBNull(j) Then
+                            lstItems.SubItems.Add("")
+                        Else
+                            lstItems.SubItems.Add(reader(j))
+                        End If
+                    Next j
+                End While
+            End If
+            closeRecordSet(cmd, reader)
+            disconnectFromDB(GlobalVariables.CONN)
+        Catch es As Exception
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox("RefreshButton " & es.Message)
+        End Try
+    End Sub
+
+
+
+    Private Sub resetIngestionButton_Click(sender As Object, e As EventArgs) Handles resetIngestionButton.Click
+        IngestionFileTypeComboBox.SelectedIndex = -1
+        IngestionInputFileTextBox.Text = ""
+
+    End Sub
+
+    Sub loaddropdowns(pConn As Object, pObj As Object, sSqlQry As String, blankval As Boolean, allFlag As Boolean, tovals As Boolean)
+        'On Error GoTo ErrorBlock
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Dim value(50) As String
+        Dim i As Integer
+        Dim comboSource As New Dictionary(Of String, String)()
+
+        If pConn.State = 0 Then
+            MsgBox("Not connected to DB!!!", vbCritical)
+            GoTo Done
+        End If
+        Try
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+            If reader.HasRows Then
+                i = 0
+                If blankval = True Then
+                    pObj.items.Add("")
+                End If
+                If allFlag = True Then
+                    pObj.items.Add("All")
+                    i = i + 1
+                End If
+                While reader.Read()
+                    If tovals = False Then
+                        If IsDBNull(reader(0)) Then
+                            Exit While
+                        End If
+                        pObj.items.Add(reader(0))
+                    Else
+                        comboSource.Add(reader.Item(1), reader.Item(0))
+                        pObj.DataSource = New BindingSource(comboSource, Nothing)
+                        pObj.DisplayMember = "Value"
+                        pObj.ValueMember = "Key"
+                    End If
+                End While
+            End If
+            closeRecordSet(cmd, reader)
+        Catch es As Exception
+            MsgBox("LoadDropdowns " & es.Message)
+        End Try
+Done:
+
+
+    End Sub
+
+
+
+    Sub ClickAuditSelectValueButton(ByRef Src As Object, ByRef Dest As Object)
+        'On Error GoTo ErrorBlock
+        Try
+
+            For iCnt = 0 To (Src.items.Count - 1)
+                If Src.SelectedIndex = iCnt Then
+                    Dest.items.Add(Src.items(iCnt))
+                End If
+            Next iCnt
+            For iCnt = 0 To (Dest.items.Count - 1)
+                For xCnt = 0 To (Src.items.Count - 1)
+                    If Dest.items(iCnt) = Src.items(xCnt) Then
+                        Src.Items.RemoveAt(xCnt)
+                        Exit For
+                    End If
+                Next xCnt
+            Next iCnt
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    Sub userlistboxpopulate()
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Dim comboSource As New Dictionary(Of String, String)()
+        Dim comboSource1 As New Dictionary(Of String, String)()
+
+        Try
+            connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+            sSqlQry = "Select FullName, LanId From Authenticatedusers where is_active = Yes Order by FullName"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+
+            If reader.HasRows Then
+                While reader.Read
+                    If IsDBNull(reader(0)) Then
+                        GoTo Done
+                    End If
+                    'UserNameComboBox.AddItem
+
+                    comboSource.Add(reader.Item(1), reader.Item(0))
+
+                    'AgentFromComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    'AgentFromComboBox.DisplayMember = "Value"
+                    'AgentFromComboBox.ValueMember = "Key"
+
+                    'AgentToComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    'AgentToComboBox.DisplayMember = "Value"
+                    'AgentToComboBox.ValueMember = "Key"
+
+                    'AgentnamesComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    'AgentnamesComboBox.DisplayMember = "Value"
+                    'AgentnamesComboBox.ValueMember = "Key"
+
+                    'UnallocAgentComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    'UnallocAgentComboBox.DisplayMember = "Value"
+                    'UnallocAgentComboBox.ValueMember = "Key"
+
+                    'AgentsCampaignComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    'AgentsCampaignComboBox.DisplayMember = "Value"
+                    'AgentsCampaignComboBox.ValueMember = "Key"
+
+
+                    'AgentnamesComboBox2.DataSource = New BindingSource(comboSource, Nothing)
+                    'AgentnamesComboBox2.DisplayMember = "Value"
+                    'AgentnamesComboBox2.ValueMember = "Key"
+
+                    WAUnallocAgentComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    WAUnallocAgentComboBox.DisplayMember = "Value"
+                    WAUnallocAgentComboBox.ValueMember = "Key"
+
+                    WAAgentnamesComboBox.DataSource = New BindingSource(comboSource, Nothing)
+                    WAAgentnamesComboBox.DisplayMember = "Value"
+                    WAAgentnamesComboBox.ValueMember = "Key"
+                End While
+            End If
+            closeRecordSet(cmd, reader)
+
+            sSqlQry = "Select FullName, LanId From Authenticatedusers Order by FullName"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+
+            If reader.HasRows Then
+
+                While reader.Read
+                    If IsDBNull(reader(0)) Then
+                        GoTo Done
+                    End If
+                    comboSource1.Add(reader.Item(1), reader.Item(0))
+
+                    UserNameComboBox.DataSource = New BindingSource(comboSource1, Nothing)
+                    UserNameComboBox.DisplayMember = "Value"
+                    UserNameComboBox.ValueMember = "Key"
+                End While
+            End If
+            'CampaignsReallocComboBox.SelectedIndex = -1
+            'UploadCampaignComboBox.SelectedIndex = -1
+            'AllocateCampaignComboBox.SelectedIndex = -1
+            'CampaignReportComboBox.SelectedIndex = -1
+            'AgentFromComboBox.SelectedIndex = -1
+            'AgentToComboBox.SelectedIndex = -1
+            'AgentnamesComboBox.SelectedIndex = -1
+            'UnallocAgentComboBox.SelectedIndex = -1
+            'AgentsCampaignComboBox.SelectedIndex = -1
+            'AgentnamesComboBox2.SelectedIndex = -1
+            WAUnallocAgentComboBox.SelectedIndex = -1
+            WAAgentnamesComboBox.SelectedIndex = -1
+            UserNameComboBox.SelectedIndex = -1
+            closeRecordSet(cmd, reader)
+            'disconnectFromDB(GlobalVariables.CONN)
+        Catch es As Exception
+            MsgBox("userlistbox " & es.Message)
+        End Try
+Done:
+        Exit Sub
+    End Sub
+
+    Sub fetchalldbusers()
+        Dim cmd As OleDbCommand
+        Dim cmd2 As OleDbCommand
+        Dim oledbreader As OleDbDataReader
+        Dim oledbreader2 As OleDbDataReader
+        Dim sSqlQry2 As String, roles As String
+        Try
+            connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+            allUsersInfoList.Clear()
+            allUsersInfoList.Columns.Add(text:="LanId", width:=80)
+            allUsersInfoList.Columns.Add(text:="Full Name", width:=120)
+            'allUsersInfoList.Columns.Add(text:="HostName", width:=120)
+            allUsersInfoList.Columns.Add(text:="Is Active", width:=90)
+            allUsersInfoList.Columns.Add(text:="Email Address", width:=100)
+            allUsersInfoList.Columns.Add(text:="Team Name", width:=70)
+            allUsersInfoList.Columns.Add(text:="Location", width:=70)
+            allUsersInfoList.Columns.Add(text:="Country", width:=150)
+            allUsersInfoList.Columns.Add(text:="Roles", width:=150)
+            sSqlQry = "Select LanId, FullName, Is_Active, Email_Address, Team_Name, Location, Country from Authenticatedusers"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            oledbreader = cmd.ExecuteReader()
+            If oledbreader.HasRows Then
+                While oledbreader.Read
+                    Dim lstItems As ListViewItem = allUsersInfoList.Items.Add(oledbreader(0))
+                    If oledbreader.IsDBNull(1) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(oledbreader(1))
+                    End If
+                    If oledbreader.IsDBNull(2) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(oledbreader(2))
+                    End If
+                    If oledbreader.IsDBNull(3) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(oledbreader(3))
+                    End If
+                    If oledbreader.IsDBNull(4) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(oledbreader(4))
+                    End If
+                    If oledbreader.IsDBNull(5) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(oledbreader(5))
+                    End If
+                    If oledbreader.IsDBNull(6) Then
+                        lstItems.SubItems.Add("")
+                    Else
+                        lstItems.SubItems.Add(oledbreader(6))
+                    End If
+                    sSqlQry2 = "Select accesslevel from Access_level Where lanid ='" & oledbreader(0) & "'"
+                    cmd2 = New OleDbCommand(sSqlQry2, GlobalVariables.CONN)
+                    oledbreader2 = cmd2.ExecuteReader()
+                    If oledbreader2.HasRows Then
+                        roles = ""
+                        While oledbreader2.Read
+                            roles = roles & oledbreader2(0) & ", "
+                        End While
+                        roles = roles.Substring(0, roles.Length - 2)
+                    End If
+                    closeRecordSet(cmd2, oledbreader2)
+                    lstItems.SubItems.Add(roles)
+                End While
+            End If
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+
+    End Sub
+
+    Private Sub UserDetailSearch_Click(sender As Object, e As EventArgs) Handles UserDetailSearch.Click
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Dim userId As String
+        Dim value1(50) As String
+        Try
+
+            If UserNameComboBox.Text <> "" Then
+                connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                'connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                If GlobalVariables.CONN.State = 0 Then
+                    MsgBox("Not connected to DB!!!", vbCritical)
+                    GoTo Done
+                End If
+                Dim key As String = DirectCast(UserNameComboBox.SelectedItem, KeyValuePair(Of String, String)).Key
+                Dim value As String = DirectCast(UserNameComboBox.SelectedItem, KeyValuePair(Of String, String)).Value
+
+
+                userId = key
+                AccessLevelComboBox.Items.Clear()
+                sSqlQry = "SELECT a.LanId, a.FullName, b.AccessLevel, a.HostName, a.is_active, a.Email_Address, a.Team_Name, a.Location" &
+                " FROM Authenticatedusers a, Access_level b where a.LanId = b.LanId and a.LanId = '" & userId & "' "
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                reader = cmd.ExecuteReader
+                If reader.HasRows Then
+                    AvailAccessLevelListBox.Items.Clear()
+
+                    loaddropdowns(GlobalVariables.CONN, AvailAccessLevelListBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='ACCESS_LEVEL'", False, False, False)
+                    While reader.Read()
+                        setFieldValue(LANIDTextBox, reader(0))
+                        setFieldValue(FullNameTextBox, reader(1))
+                        'setFieldValue(MachineNameTextBox, reader(3))
+                        setFieldValue(ExistingUserEmailTextBox, reader(5))
+                        setFieldValue(ExistingUserTeamTextBox, reader(6))
+                        setFieldValue(ExistingUserLocationComboBox, reader(7))
+                        If reader(4).ToString = False Then
+                            DeactivatedLabel.Visible = True
+                        Else
+                            DeactivatedLabel.Visible = False
+                        End If
+                        AccessLevelComboBox.Items.Add(reader(2))
+                        For index = 0 To AvailAccessLevelListBox.Items.Count - 1
+                            If AvailAccessLevelListBox.Items(index) = reader(2) Then
+                                AvailAccessLevelListBox.Items.RemoveAt(index)
+                                Exit For
+                            End If
+                        Next index
+
+                    End While
+
+
+                Else
+                    MsgBox("No Data Found!", vbInformation)
+                End If
+                closeRecordSet(cmd, reader)
+
+                sSqlQry = "SELECT a.Country" &
+                " FROM Authenticatedusers a Where a.LanId = '" & userId & "' "
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                reader = cmd.ExecuteReader
+                If reader.HasRows Then
+
+
+
+                    AvailCountryAccessListBox.Items.Clear()
+                    CountryAccessComboBox.Items.Clear()
+
+                    loaddropdowns(GlobalVariables.CONN, AvailCountryAccessListBox, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='COUNTRY'", False, False, False)
+                    While reader.Read()
+                        Dim items() As String = reader(0).Split(",")
+                        For index = 0 To items.Length() - 1
+                            CountryAccessComboBox.Items.Add(items(index))
+
+                            For count = 0 To AvailCountryAccessListBox.Items.Count - 1
+                                If AvailCountryAccessListBox.Items(count) = items(index) Then
+                                    AvailCountryAccessListBox.Items.RemoveAt(count)
+
+                                    Exit For
+
+                                End If
+                            Next count
+                        Next index
+                    End While
+                End If
+                disconnectFromDB(GlobalVariables.CONN)
+
+            Else
+                MsgBox("User Name is empty", vbInformation)
+                GoTo Done
+            End If
+Done:
+            disconnectFromDB(GlobalVariables.CONN)
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Sub setFieldValue(pObj As Object, pStrValue As Object)
+        'On Error GoTo ErrorHandler
+        Try
+
+            'pStrValue.ToString()
+            If IsDate(pStrValue) Then
+                pObj.Text = Format(CDate(pStrValue), "dd-MMM-yyyy")
+                GoTo Done
+            End If
+
+            If IsDBNull(pStrValue) = True Then
+                pObj.text = ""
+            ElseIf pStrValue = "" Then
+                pObj.text = ""
+            Else
+                pObj.text = pStrValue
+            End If
+Done:
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+
+    Private Sub EditRoleAddCommandButton_Click(sender As Object, e As EventArgs) Handles EditRoleAddCommandButton.Click
+        Try
+            ClickAuditSelectValueButton(AvailAccessLevelListBox, AccessLevelComboBox)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub EditRoleRemoveCommandButton_Click(sender As Object, e As EventArgs) Handles EditRoleRemoveCommandButton.Click
+        Try
+            ClickAuditSelectValueButton(AccessLevelComboBox, AvailAccessLevelListBox)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+    Private Sub EditRoleAddCommandButton2_Click(sender As Object, e As EventArgs) Handles EditRoleAddCommandButton2.Click
+        Try
+            ClickAuditSelectValueButton(AvailCountryAccessListBox, CountryAccessComboBox)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub EditRoleRemoveCommandButton2_Click(sender As Object, e As EventArgs) Handles EditRoleRemoveCommandButton2.Click
+        Try
+            ClickAuditSelectValueButton(CountryAccessComboBox, AvailCountryAccessListBox)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+    Private Sub UserDetailEdit_Click(sender As Object, e As EventArgs) Handles UserDetailEdit.Click
+        'On Error GoTo ErrorBlock
+        Dim cmd As OleDbCommand
+        Dim paramvalue As Integer
+        Dim userid As String
+        Dim Value3 As String
+        Dim countries As String
+        Try
+            If String.IsNullOrEmpty(LANIDTextBox.Text) = False And String.IsNullOrEmpty(FullNameTextBox.Text) = False And String.IsNullOrEmpty(ExistingUserTeamTextBox.Text) = False And String.IsNullOrEmpty(ExistingUserLocationComboBox.Text) = False Then
+                connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                'connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATH, "MSAccess")
+                If GlobalVariables.CONN.State = 0 Then
+                    MsgBox("Not connected to DB!!!")
+                    GoTo Done
+                End If
+                Dim key As String = DirectCast(UserNameComboBox.SelectedItem, KeyValuePair(Of String, String)).Key
+                Dim value As String = DirectCast(UserNameComboBox.SelectedItem, KeyValuePair(Of String, String)).Value
+
+                countries = ""
+                For index = 0 To CountryAccessComboBox.Items.Count - 1
+                    countries = countries & CountryAccessComboBox.Items(index) & ","
+                Next index
+                countries = countries.TrimEnd(CChar(","))
+
+                If String.IsNullOrEmpty(countries) Then
+                    MsgBox("Country Access not mentioned. Please select a country and edit the user.", vbCritical, "ERROR")
+                    GoTo Done
+                End If
+
+                userid = key
+                sSqlQry = "Update Authenticatedusers Set FullName = '" & FullNameTextBox.Text & "', is_active = Yes , Email_Address = '" & ExistingUserEmailTextBox.Text & "', Team_Name = '" & ExistingUserTeamTextBox.Text & "', Location = '" & ExistingUserLocationComboBox.Text & "'" &
+        " where LanId = '" & userid & "' "
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                For iCnt = 0 To (AccessLevelComboBox.Items.Count - 1)
+                    sSqlQry = "Select count(*) From ACCESS_LEVEL Where LanId = '" & userid & "' and Accesslevel = '" & AccessLevelComboBox.Items(iCnt) & "'"
+                    cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    paramvalue = cmd.ExecuteScalar
+                    If paramvalue = 0 Then
+                        sSqlQry = "Insert into ACCESS_LEVEL (LanId, Accesslevel) values ('" & userid & "','" & AccessLevelComboBox.Items(iCnt) & "')"
+                        cmd.Dispose()
+                        cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                        cmd.ExecuteNonQuery()
+                    End If
+                    cmd.Dispose()
+                Next iCnt
+
+
+                For iCnt = 0 To (AvailAccessLevelListBox.Items.Count - 1)
+                    If AccessLevelComboBox.Items.Count >= 1 Then
+                        sSqlQry = "Select count(*) From ACCESS_LEVEL Where LanId = '" & userid & "' and Accesslevel = '" & AvailAccessLevelListBox.Items(iCnt) & "'"
+                        cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                        paramvalue = cmd.ExecuteScalar
+                        If paramvalue > 0 Then
+                            sSqlQry = "DELETE FROM ACCESS_LEVEL Where LanId = '" & userid & "' and Accesslevel = '" & AvailAccessLevelListBox.Items(iCnt) & "'"
+                            cmd.Dispose()
+                            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                            cmd.ExecuteNonQuery()
+                        End If
+                        cmd.Dispose()
+                    Else
+                        MsgBox("User " & userid & " has to have minimum one access role !", vbInformation)
+                        GoTo Done
+                    End If
+                Next
+
+                sSqlQry = "UPDATE Authenticatedusers set COUNTRY='" & countries & "' Where LanId = '" & userid & "'"
+                cmd.Dispose()
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+
+                UserNameComboBox.DataSource = vbNullString
+                'AgentsCampaignComboBox.DataSource = vbNullString
+                'AvailAccessLevelListBox2.DataSource = vbNullString
+                'AccessLevelComboBox2.DataSource = vbNullString
+                'AgentnamesComboBox.DataSource = vbNullString
+                'UnallocAgentComboBox.DataSource = vbNullString
+                'AgentFromComboBox.DataSource = vbNullString
+                'AgentToComboBox.DataSource = vbNullString
+                'AgentnamesComboBox2.DataSource = vbNullString
+                WAUnallocAgentComboBox.DataSource = vbNullString
+                WAAgentnamesComboBox.DataSource = vbNullString
+
+                UserNameComboBox.Items.Clear()
+                'AgentsCampaignComboBox.Items.Clear()
+                'AvailAccessLevelListBox2.Items.Clear()
+                'AccessLevelComboBox2.Items.Clear()
+                'AgentnamesComboBox.Items.Clear()
+                'UnallocAgentComboBox.Items.Clear()
+                'AgentFromComboBox.Items.Clear()
+                'AgentToComboBox.Items.Clear()
+                'AgentnamesComboBox2.Items.Clear()
+                WAUnallocAgentComboBox.Items.Clear()
+                WAAgentnamesComboBox.Items.Clear()
+                AvailCountryAccessListBox.Items.Clear()
+                CountryAccessComboBox.Items.Clear()
+                DeactivatedLabel.Visible = False
+                userlistboxpopulate()
+                fetchalldbusers()
+
+                'disconnectFromDB(GlobalVariables.CONN)
+                disconnectFromDB(GlobalVariables.CONN)
+                MsgBox("User Data Edited!")
+
+                clearAllFields()
+
+
+            Else
+                MsgBox("Fields cannot be BLANK")
+            End If
+
+Done:
+            disconnectFromDB(GlobalVariables.CONN)
+        Catch es As Exception
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox("UserDetailEdit_Click " & es.Message)
+        End Try
+
+    End Sub
+
+    Private Sub DeleteUserDetail_Click(sender As Object, e As EventArgs) Handles DeleteUserDetail.Click
+        'On Error GoTo ErrorBlock
+        Dim userId As String
+        Dim paramvalue As Integer
+        Dim cmd As OleDbCommand
+        Try
+
+            If String.IsNullOrEmpty(LANIDTextBox.Text) = False Or String.IsNullOrEmpty(FullNameTextBox.Text) = False Or AccessLevelComboBox.Text <> "" And String.IsNullOrEmpty(ExistingUserTeamTextBox.Text) = False And String.IsNullOrEmpty(ExistingUserLocationComboBox.Text) = False Then
+                'connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATH, "MSAccess")
+                connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                If GlobalVariables.CONN.State = 0 Then
+                    MsgBox("Not connected to DB!!!")
+                    GoTo Done
+                End If
+                Dim key As String = DirectCast(UserNameComboBox.SelectedItem, KeyValuePair(Of String, String)).Key
+                Dim value As String = DirectCast(UserNameComboBox.SelectedItem, KeyValuePair(Of String, String)).Value
+
+                userId = key
+                'sSqlQry = "Select count(*) from " & GlobalVariables.COUNTRYPRE & "_CC_Escalations Where Agent_id = '" & userId & "' AND Final_Outcome = 'Not Resolved'"
+                'cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                'paramvalue = cmd.ExecuteScalar
+                'If paramvalue = 0 Then
+                'cmd.Dispose()
+                'sSqlQry = "DELETE FROM Authenticatedusers "
+                sSqlQry = "Update Authenticatedusers set " &
+                        " is_active = " & False &
+                        " where LanId = '" & userId & "' "
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+                UserNameComboBox.DataSource = vbNullString
+                'AgentsCampaignComboBox.DataSource = vbNullString
+
+                'AgentnamesComboBox.DataSource = vbNullString
+                'UnallocAgentComboBox.DataSource = vbNullString
+                'AgentFromComboBox.DataSource = vbNullString
+                'AgentToComboBox.DataSource = vbNullString
+                'AgentnamesComboBox2.DataSource = vbNullString
+                WAUnallocAgentComboBox.DataSource = vbNullString
+                WAAgentnamesComboBox.DataSource = vbNullString
+
+                UserNameComboBox.Items.Clear()
+                'AgentsCampaignComboBox.Items.Clear()
+
+                'AgentnamesComboBox.Items.Clear()
+                'UnallocAgentComboBox.Items.Clear()
+                'AgentFromComboBox.Items.Clear()
+                'AgentToComboBox.Items.Clear()
+                'AgentnamesComboBox2.Items.Clear()
+                WAUnallocAgentComboBox.Items.Clear()
+                WAAgentnamesComboBox.Items.Clear()
+                AvailCountryAccessListBox.Items.Clear()
+                CountryAccessComboBox.Items.Clear()
+                userlistboxpopulate()
+                fetchalldbusers()
+                'disconnectFromDB(GlobalVariables.CONN)
+                disconnectFromDB(GlobalVariables.CONN)
+                MsgBox("User Deactivated!")
+                'Else
+                '    cmd.Dispose()
+                '    MsgBox("User has Unresolved Cases assigned ! Please reallocate and proceed to deactivate", vbInformation)
+                '    GoTo Done
+                'End If
+                clearAllFields()
+            Else
+                MsgBox("Fields cannot be BLANK")
+            End If
+Done:
+            disconnectFromDB(GlobalVariables.CONN)
+            'disconnectFromDB(GlobalVariables.CONN)
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+
+        'ErrorBlock:
+        '        DisplayError(Err.Source, Err.Description, "CCAdminTool.DeleteUserDetail_Click", Erl)
+        '        Resume Done
+    End Sub
+
+    Private Sub RstExistUserCmdBtn_Click(sender As Object, e As EventArgs) Handles RstExistUserCmdBtn.Click
+        'On Error GoTo ErrorBlock
+        Try
+            LANIDTextBox.Text = ""
+            FullNameTextBox.Text = ""
+            AccessLevelComboBox.Text = ""
+            ExistingUserTeamTextBox.SelectedIndex = -1
+            UserNameComboBox.SelectedIndex = -1
+            ExistingUserLocationComboBox.SelectedIndex = -1
+            'MachineNameTextBox.Text = ""
+            AvailAccessLevelListBox.Items.Clear()
+            AccessLevelComboBox.Items.Clear()
+            ExistingUserEmailTextBox.Text = ""
+            AvailCountryAccessListBox.Items.Clear()
+            CountryAccessComboBox.Items.Clear()
+Done:
+
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+
+        'ErrorBlock:
+        '        DisplayError(Err.Source, Err.Description, "CCAdminTool.RstExistUserCmdBtn_Click", Erl)
+        '        Resume Done
+    End Sub
+
+    Private Sub NewRoleAddCommandButton_Click(sender As Object, e As EventArgs) Handles NewRoleAddCommandButton.Click
+        Try
+            ClickAuditSelectValueButton(AccessLevelComboBox2, AvailAccessLevelListBox2)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub NewRoleRemoveCommandButton_Click(sender As Object, e As EventArgs) Handles NewRoleRemoveCommandButton.Click
+        Try
+            ClickAuditSelectValueButton(AvailAccessLevelListBox2, AccessLevelComboBox2)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub NewRoleAddCommandButton2_Click(sender As Object, e As EventArgs) Handles NewRoleAddCommandButton2.Click
+        Try
+            ClickAuditSelectValueButton(CountryAccessComboBox2, AvailCountryAccessListBox2)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub NewRoleRemoveCommandButton2_Click(sender As Object, e As EventArgs) Handles NewRoleRemoveCommandButton2.Click
+        Try
+            ClickAuditSelectValueButton(AvailCountryAccessListBox2, CountryAccessComboBox2)
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub AddUserDetail_Click(sender As Object, e As EventArgs) Handles AddUserDetail.Click
+        'On Error GoTo ErrorBlock
+        Dim paramvalue As Integer
+        Dim cmd As OleDbCommand
+        Dim countries As String
+        Try
+            If String.IsNullOrEmpty(LANIDTextBox2.Text) = False And String.IsNullOrEmpty(FullNameTextBox2.Text) = False And String.IsNullOrEmpty(NewUserTeamComboBox.Text) = False And String.IsNullOrEmpty(NewUserLocationComboBox.Text) = False Then
+                If AvailAccessLevelListBox2.Items.Count > 0 Then
+                    'connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATH, "MSAccess")
+                    connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                    If GlobalVariables.CONN.State = 0 Then
+                        MsgBox("Not connected to DB!!!", vbCritical)
+                        GoTo Done
+                    End If
+                    sSqlQry = "Select count(*) FROM Authenticatedusers Where LanId = '" & LANIDTextBox2.Text & "'"
+                    cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    paramvalue = cmd.ExecuteScalar
+                    If paramvalue = 0 Then
+                        cmd.Dispose()
+                        countries = ""
+                        For index = 0 To AvailCountryAccessListBox2.Items.Count - 1
+                            countries = countries & AvailCountryAccessListBox2.Items(index) & ","
+                        Next index
+                        countries = countries.TrimEnd(CChar(","))
+                        If String.IsNullOrEmpty(countries) Then
+                            MsgBox("Country Access not mentioned. Please select a country and Add the user.", vbCritical, "ERROR")
+                            GoTo Done
+                        End If
+                        sSqlQry = "INSERT into Authenticatedusers (LanId, FullName, is_active, Email_Address, Team_Name, Location, Country) values ('" & LANIDTextBox2.Text & "','" & FullNameTextBox2.Text & "', Yes,'" & NewUserEmailTextBox.Text & "' , '" & NewUserTeamComboBox.Text & "', '" & NewUserLocationComboBox.Text & "', '" & countries & "') "
+                        cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                        cmd.ExecuteNonQuery()
+                        cmd.Dispose()
+                        For index = 0 To AvailAccessLevelListBox2.Items.Count - 1
+                            sSqlQry = "INSERT into ACCESS_LEVEL  (LanId,Accesslevel) values ('" & LANIDTextBox2.Text & "','" & AvailAccessLevelListBox2.Items(index) & "')"
+                            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                            cmd.ExecuteNonQuery()
+                            cmd.Dispose()
+                        Next index
+
+                        UserNameComboBox.DataSource = vbNullString
+                        'AgentsCampaignComboBox.DataSource = vbNullString
+                        AvailAccessLevelListBox2.DataSource = vbNullString
+                        AccessLevelComboBox2.DataSource = vbNullString
+                        CountryAccessComboBox2.DataSource = vbNullString
+                        AvailCountryAccessListBox2.DataSource = vbNullString
+
+                        WAUnallocAgentComboBox.DataSource = vbNullString
+                        WAAgentnamesComboBox.DataSource = vbNullString
+
+                        UserNameComboBox.Items.Clear()
+                        'AgentsCampaignComboBox.Items.Clear()
+                        AvailAccessLevelListBox2.Items.Clear()
+                        AccessLevelComboBox2.Items.Clear()
+                        CountryAccessComboBox2.Items.Clear()
+                        AvailCountryAccessListBox2.Items.Clear()
+                        WAUnallocAgentComboBox.Items.Clear()
+                        WAAgentnamesComboBox.Items.Clear()
+                        loaddropdowns(GlobalVariables.CONN, AccessLevelComboBox2, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='ACCESS_LEVEL'", False, False, False)
+                        loaddropdowns(GlobalVariables.CONN, CountryAccessComboBox2, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='COUNTRY'", False, False, False)
+                        userlistboxpopulate()
+                        fetchalldbusers()
+                        'disconnectFromDB(GlobalVariables.CONN)
+                        disconnectFromDB(GlobalVariables.CONN)
+                        MsgBox("New User Details Added")
+                        FullNameTextBox2.Text = ""
+                        LANIDTextBox2.Text = ""
+                        'MachineNameTextBox2.Text = ""
+                        NewUserEmailTextBox.Text = ""
+                        NewUserTeamComboBox.SelectedIndex = -1
+                        NewUserLocationComboBox.SelectedIndex = -1
+
+                    Else
+                        cmd.Dispose()
+                        MsgBox("User already exists !", vbInformation)
+                        FullNameTextBox2.Text = ""
+                        LANIDTextBox2.Text = ""
+                        'MachineNameTextBox2.Text = ""
+                        NewUserEmailTextBox.Text = ""
+                        NewUserTeamComboBox.SelectedIndex = -1
+                        GoTo Done
+                    End If
+                    clearAllFields()
+                Else
+                    MsgBox("Agent Access level should be selected")
+                End If
+            Else
+                MsgBox("Fields cannot be BLANK")
+            End If
+        Catch es As Exception
+            MsgBox("AddUserDetail_Click " & es.Message)
+        End Try
+Done:
+        disconnectFromDB(GlobalVariables.CONN)
+    End Sub
+
+    Private Sub RstNewUsrCmdBtn_Click() Handles RstNewUsrCmdBtn.Click
+        Try
+            LANIDTextBox2.Text = ""
+            FullNameTextBox2.Text = ""
+            AccessLevelComboBox2.Items.Clear()
+            AvailAccessLevelListBox2.Items.Clear()
+            CountryAccessComboBox2.Items.Clear()
+            AvailCountryAccessListBox2.Items.Clear()
+            'MachineNameTextBox2.Text = ""
+            NewUserEmailTextBox.Text = ""
+            NewUserTeamComboBox.SelectedIndex = -1
+            NewUserLocationComboBox.SelectedIndex = -1
+            'connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATH, "MSAccess")
+            connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+            If GlobalVariables.CONN.State = 0 Then
+                MsgBox("Not connected to DB!!!")
+                GoTo Done
+            End If
+            loaddropdowns(GlobalVariables.CONN, AccessLevelComboBox2, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='ACCESS_LEVEL'", False, False, False)
+            loaddropdowns(GlobalVariables.CONN, CountryAccessComboBox2, "Select PARAM_VALUE FROM CUSTOM_PARAMETERs WHERE PARAM_TYPE ='COUNTRY'", False, False, False)
+            disconnectFromDB(GlobalVariables.CONN)
+Done:
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+    End Sub
+    Sub clearAllFields()
+        'On Error GoTo ErrorBlock
+        Dim CO As Integer
+        'Dim CS As Integer
+        Dim TOC As Integer
+        Dim RL As Integer
+        Try
+
+            'CallOutcomeListBox.SelectedIndices.Clear()
+            'TypeOfCallListBox.SelectedIndices.Clear()
+            'RestraintLiftedListBox.SelectedIndices.Clear()
+
+            FromDateTextBox.ResetText()
+            ToDateTextBox.ResetText()
+            'TROFAFromDateTextBox.ResetText()
+            'TROFAToDateTextBox.ResetText()
+            'SLADateTextBox1.ResetText()
+            'FromDateTextBox2.ResetText()
+            'ToDateTextBox2.ResetText()
+            'CampaignFromDateTextBox.ResetText()
+            'CampaignToDateTextBox.ResetText()
+
+            RepPathTextBox.Text = ""
+            'RepPathTextBox1.Text = ""
+            'EscalationInputFileTextBox.Text = ""
+            'RepPathTextBox1.Text = GlobalVariables.ESCReploc
+            'trofaTextBox.Text = ""
+            'trofaTextBox.Text = GlobalVariables.TROFAReploc
+
+            LANIDTextBox.Text = ""
+            LANIDTextBox2.Text = ""
+            FullNameTextBox.Text = ""
+            FullNameTextBox2.Text = ""
+            AccessLevelComboBox.Text = ""
+            AccessLevelComboBox2.Text = ""
+            'MachineNameTextBox.Text = ""
+            'MachineNameTextBox2.Text = ""
+            ExistingUserEmailTextBox.Text = ""
+            ExistingUserTeamTextBox.SelectedIndex = -1
+            ExistingUserLocationComboBox.SelectedIndex = -1
+
+            'NewParamTypeTextBox1.Text = ""
+            'NewParamValueTextBox2.Text = ""
+            'ParamValueListBox.Items.Clear()
+            'AssignedCasesListBox.Clear()
+            'AssignedCasesListBox2.Clear()
+            'MultiPage1.Text = 0
+            'AssignToCommandButton.Enabled = False
+            'AssignBackCommandButton.Enabled = False
+            'ToCountTextBox.Text = ""
+            'FromCountTextBox.Text = ""
+            'AddCampaignCommandButton.Visible = False
+            'CampaignNameLabel.Visible = False
+            'NewCampaignNameTextBox.Visible = False
+            'ResetCampaignCommandButton.Visible = False
+            AvailAccessLevelListBox.Items.Clear()
+            AccessLevelComboBox.Items.Clear()
+            CountryAccessComboBox.Items.Clear()
+            AvailCountryAccessListBox.Items.Clear()
+
+            'AlertsComboBoxCC.SelectedIndex = -1
+            'AlertsComboBoxEC.SelectedIndex = -1
+            'ModifyCampaignsUpdate.Enabled = False
+            'ModifyCampaignsComboBox.SelectedIndex = -1
+Done:
+            Exit Sub
+        Catch ex As Exception
+            MsgBox(ex.Message, vbCritical, "ERROR")
+        End Try
+        'ErrorBlock:
+        '        DisplayError(Err.Source, Err.Description, "CCAdminTool.clearAllFields", Erl)
+        '        Resume Done
+    End Sub
+
+    Private Sub Refreshallusers_Click(sender As Object, e As EventArgs) Handles Refreshallusers.Click
+        fetchalldbusers()
+    End Sub
+
+    Private Sub ResetCMIngestionButton_Click(sender As Object, e As EventArgs) Handles ResetCMIngestionButton.Click
+        Try
+            CMIngestionInputFileTextBox.Text = ""
+        Catch ex As Exception
+            MsgBox(ex.Message, vbInformation, "ERROR")
+        End Try
+    End Sub
+
+    Private Sub SearchParamCommandButton1_Click() Handles SearchParamCommandButton1.Click
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        Dim paramtype As String
+
+        Try
+            If CallTypeComboBox.Text <> "" Then
+                connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                paramtype = CallTypeComboBox.Text
+                ParamValueListBox.Clear()
+
+                sSqlQry = "SELECT PARAM_VALUE, FILT1, FILT2, FILT3, FILT4, FILT5 FROM CUSTOM_PARAMETERS WHERE PARAM_TYPE = '" & paramtype & "'"
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                reader = cmd.ExecuteReader
+                If reader.HasRows Then
+                    ParamValueListBox.View = View.Details
+                    ParamValueListBox.Columns.Add("Parameter Value")
+                    ParamValueListBox.Columns.Add("Filter 1")
+                    ParamValueListBox.Columns.Add("Filter 2")
+                    ParamValueListBox.Columns.Add("Filter 3")
+                    ParamValueListBox.Columns.Add("Filter 4")
+                    ParamValueListBox.Columns.Add("Filter 5")
+                    ParamValueListBox.Columns(0).Width = 140
+                    ParamValueListBox.Columns(1).Width = 100
+                    ParamValueListBox.Columns(2).Width = 100
+                    ParamValueListBox.Columns(3).Width = 100
+                    ParamValueListBox.Columns(4).Width = 100
+                    ParamValueListBox.Columns(5).Width = 100
+                    While reader.Read
+                        Dim LstItem As ListViewItem = ParamValueListBox.Items.Add(reader(0))
+                        If reader.IsDBNull(1) = True Then
+                            LstItem.SubItems.Add("")
+                        Else
+                            LstItem.SubItems.Add(reader.Item(1))
+                        End If
+                        If reader.IsDBNull(2) = True Then
+
+                            LstItem.SubItems.Add("")
+                        Else
+                            LstItem.SubItems.Add(reader.Item(3))
+                        End If
+                        If reader.IsDBNull(4) = True Then
+                            LstItem.SubItems.Add("")
+                        Else
+                            LstItem.SubItems.Add(reader.Item(4))
+                        End If
+                        If reader.IsDBNull(5) = True Then
+                            LstItem.SubItems.Add("")
+                        Else
+                            LstItem.SubItems.Add(reader.Item(5))
+                        End If
+
+                    End While
+                    ParamValueListBox.Refresh()
+                End If
+                disconnectFromDB(GlobalVariables.CONN)
+            Else
+                MsgBox("Parameter Type is empty")
+            End If
+        Catch es As Exception
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox("SearchParamCommandButton1_Click " & es.Message)
+        End Try
+    End Sub
+
+    Private Sub AddParamCommandButton1_Click(sender As Object, e As EventArgs) Handles AddParamCommandButton1.Click
+        Dim paramvalue As String
+        Dim cmd As OleDbCommand
+
+        Try
+            If String.IsNullOrEmpty(NewParamTypeTextBox1.Text) = False Then
+                If String.IsNullOrEmpty(NewParamValueTextBox2.Text) = False Then
+                    connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                    If GlobalVariables.CONN.State = 0 Then
+                        MsgBox("Not connected to DB!!!", vbInformation)
+                        GoTo Done
+                    End If
+                    sSqlQry = "Select count(*) From CUSTOM_PARAMETERS Where PARAM_TYPE = '" & NewParamTypeTextBox1.Text & "'"
+                    cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    paramvalue = cmd.ExecuteScalar
+                    If paramvalue = 0 Then
+                        cmd.Dispose()
+                        sSqlQry = "INSERT into CUSTOM_PARAMETERS (PARAM_TYPE, PARAM_VALUE, FILT1, FILT2, FILT3, FILT4, FILT5) values ('" & NewParamTypeTextBox1.Text & "','" & NewParamValueTextBox2.Text & "','" & FILT1TextBox.Text & "','" & FILT2TextBox.Text & "','" & FILT3TextBox.Text & "','" & FILT4TextBox.Text & "','" & FILT5TextBox.Text & "') "
+                        cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                        cmd.ExecuteNonQuery()
+                        cmd.Dispose()
+                        CallTypeComboBox.Items.Clear()
+                        ParamValueListBox.Items.Clear()
+                        paratypelistboxpopulate()
+                        disconnectFromDB(GlobalVariables.CONN)
+                        MsgBox("New Parameter Type Added", vbInformation)
+                        'clearAllFields
+                        CallTypeComboBox.Text = NewParamTypeTextBox1.Text
+                        SearchParamCommandButton1_Click()
+                        NewParamTypeTextBox1.Text = ""
+                        NewParamValueTextBox2.Text = ""
+                        FILT1TextBox.Text = ""
+                        FILT2TextBox.Text = ""
+                        FILT3TextBox.Text = ""
+                        FILT4TextBox.Text = ""
+                        FILT5TextBox.Text = ""
+                        'ParamValueListBox.Clear
+                        'ParaTypeComboBox1.Text = ""
+                    Else
+                        cmd.Dispose()
+                        MsgBox("Parameter Type exists ! Please select it from the dropdown.", vbInformation)
+                        CallTypeComboBox.Text = NewParamTypeTextBox1.Text
+                        NewParamTypeTextBox1.Text = ""
+                        NewParamValueTextBox2.Text = ""
+                        FILT1TextBox.Text = ""
+                        FILT2TextBox.Text = ""
+                        FILT3TextBox.Text = ""
+                        FILT4TextBox.Text = ""
+                        FILT5TextBox.Text = ""
+                        SearchParamCommandButton1_Click()
+                        GoTo Done
+                    End If
+                Else
+                    MsgBox("Parameter Value is empty", vbInformation)
+                    GoTo Done
+                End If
+            Else
+                If String.IsNullOrEmpty(CallTypeComboBox.Text) = False And String.IsNullOrEmpty(NewParamValueTextBox2.Text) = False Then
+                    connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                    If GlobalVariables.CONN.State = 0 Then
+                        MsgBox("Not connected to DB!!!", vbInformation)
+                        GoTo Done
+                    End If
+                    sSqlQry = "Select count(*) From CUSTOM_PARAMETERS Where PARAM_TYPE = '" & CallTypeComboBox.Text & "' AND PARAM_VALUE = '" & NewParamValueTextBox2.Text & "'"
+                    cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    paramvalue = cmd.ExecuteScalar
+                    If paramvalue = 0 Then
+                        cmd.Dispose()
+                        sSqlQry = "INSERT into CUSTOM_PARAMETERS (PARAM_TYPE, PARAM_VALUE, FILT1, FILT2, FILT3, FILT4, FILT5) values ('" & CallTypeComboBox.Text & "','" & NewParamValueTextBox2.Text & "','" & FILT1TextBox.Text & "','" & FILT2TextBox.Text & "','" & FILT3TextBox.Text & "','" & FILT4TextBox.Text & "','" & FILT5TextBox.Text & "') "
+                        cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                        cmd.ExecuteNonQuery()
+                        cmd.Dispose()
+                        ParamValueListBox.Items.Clear()
+                        SearchParamCommandButton1_Click()
+                        disconnectFromDB(GlobalVariables.CONN)
+                        MsgBox("New Parameter Value Added", vbInformation)
+                        NewParamTypeTextBox1.Text = ""
+                        NewParamValueTextBox2.Text = ""
+                        FILT1TextBox.Text = ""
+                        FILT2TextBox.Text = ""
+                        FILT3TextBox.Text = ""
+                        FILT4TextBox.Text = ""
+                        FILT5TextBox.Text = ""
+                    Else
+                        cmd.Dispose()
+                        MsgBox("Parameter Value already exists !", vbInformation)
+                        NewParamTypeTextBox1.Text = ""
+                        NewParamValueTextBox2.Text = ""
+                        FILT1TextBox.Text = ""
+                        FILT2TextBox.Text = ""
+                        FILT3TextBox.Text = ""
+                        FILT4TextBox.Text = ""
+                        FILT5TextBox.Text = ""
+                        GoTo Done
+                    End If
+                Else
+                    MsgBox("Parameter Type is empty", vbInformation)
+                    GoTo Done
+                End If
+            End If
+
+        Catch es As Exception
+            MsgBox("AddParamCommandButton1_Click " & es.Message)
+            GoTo Done
+        End Try
+Done:
+        disconnectFromDB(GlobalVariables.CONN)
+
+    End Sub
+    Sub paratypelistboxpopulate()
+        Dim sSqlQry As String
+        Dim cmd As OleDbCommand
+        Dim reader As OleDbDataReader
+        CallTypeComboBox.Items.Clear()
+        Try
+            sSqlQry = "Select Distinct Param_type From CUSTOM_PARAMETERS"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+
+            If reader.HasRows Then
+                While reader.Read
+                    If IsDBNull(reader(0)) Then
+                        GoTo Done
+                    End If
+                    CallTypeComboBox.Items.Add(reader(0))
+                End While
+            End If
+            closeRecordSet(cmd, reader)
+        Catch es As Exception
+            MsgBox("paratypelistboxpopulate " & es.Message)
+        End Try
+Done:
+
+        closeRecordSet(cmd, reader)
+        Exit Sub
+    End Sub
+    Private Sub DeleteParamCommandButton1_Click(sender As Object, e As EventArgs) Handles DeleteParamCommandButton1.Click
+        Dim paramtype As String
+        Dim cmd As OleDbCommand
+        Dim alue As String
+        Dim counter As Integer
+        Dim valsdeleted As Boolean
+        valsdeleted = False
+
+        Try
+            If String.IsNullOrEmpty(CallTypeComboBox.Text) = False Then
+
+                connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                If GlobalVariables.CONN.State = 0 Then
+                    MsgBox("Not connected to DB!!!", vbInformation)
+                    GoTo Done
+                End If
+
+                'For iCnt = 0 To (ParamValueListBox.Items.Count - 1)
+                'MsgBox(ParamValueListBox.SelectedItems(0).Text)
+                'If ParamValueListBox.SelectedItems.IndexOf = iCnt Then
+                '        counter = counter + 1
+                'alue = ParamValueListBox.SelectedItems(iCnt).Text
+                alue = ParamValueListBox.SelectedItems(0).Text
+                paramtype = CallTypeComboBox.Text
+                sSqlQry = "DELETE FROM CUSTOM_PARAMETERS " &
+                " where PARAM_TYPE = '" & paramtype & "' and  PARAM_VALUE = '" & alue & "'"
+                cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                cmd.ExecuteNonQuery()
+                cmd.Dispose()
+                valsdeleted = True
+                'End If
+                'If iCnt = (ParamValueListBox.Items.Count - 1) And valsdeleted = False Then
+                '    MsgBox("Please select a value to remove !", vbInformation)
+                '    GoTo Done
+                'End If
+                'Next iCnt
+                'disconnectFromDB(GlobalVariables.CONN)
+                If ParamValueListBox.Items.Count - counter = 0 Then
+                    CallTypeComboBox.Items.Clear()
+                    ParamValueListBox.Items.Clear()
+                    paratypelistboxpopulate()
+                    NewParamTypeTextBox1.Text = ""
+                    NewParamValueTextBox2.Text = ""
+                    FILT1TextBox.Text = ""
+                    FILT2TextBox.Text = ""
+                    FILT3TextBox.Text = ""
+                    FILT4TextBox.Text = ""
+                    FILT5TextBox.Text = ""
+                    disconnectFromDB(GlobalVariables.CONN)
+                    MsgBox("Parameter Type and Value Deleted!", vbInformation)
+                Else
+                    ParamValueListBox.Items.Clear()
+                    SearchParamCommandButton1_Click()
+                    NewParamTypeTextBox1.Text = ""
+                    NewParamValueTextBox2.Text = ""
+                    FILT1TextBox.Text = ""
+                    FILT2TextBox.Text = ""
+                    FILT3TextBox.Text = ""
+                    FILT4TextBox.Text = ""
+                    FILT5TextBox.Text = ""
+                    disconnectFromDB(GlobalVariables.CONN)
+                    MsgBox("Parameter Value Deleted!", vbInformation)
+                End If
+                'clearAllFields
+            Else
+                MsgBox("Parameter Type is empty", vbInformation)
+                GoTo Done
+            End If
+        Catch es As Exception
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox("DeleteParamCommandButton1_Click " & es.Message)
+        End Try
+Done:
+        disconnectFromDB(GlobalVariables.CONN)
+        Exit Sub
+    End Sub
+
+    Private Sub ModifyParamCommandButton1_Click(sender As Object, e As EventArgs) Handles ModifyParamCommandButton1.Click
+        Dim paramtype As String
+        Dim counter As Integer
+        Dim paramvalue As Integer
+        Dim cmd As OleDbCommand
+        Dim valsdeleted As Boolean
+        Dim alue As String
+        valsdeleted = False
+        Try
+            If String.IsNullOrEmpty(CallTypeComboBox.Text) = False Then
+
+                connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+                If GlobalVariables.CONN.State = 0 Then
+                    MsgBox("Not connected to DB!!!", vbInformation, "ERROR")
+                    GoTo Done
+                End If
+
+                'For iCnt = 0 To (ParamValueListBox.Items.Count - 1)
+                'If ParamValueListBox.SelectedItems.Count = iCnt Then
+                If String.IsNullOrEmpty(NewParamValueTextBox2.Text) = False Then
+                    counter = counter + 1
+                    paramtype = CallTypeComboBox.Text
+                    'sSqlQry = "Select count(*) FROM CUSTOM_PARAMETERS where PARAM_TYPE = '" & paramtype & "' and  PARAM_VALUE = '" & NewParamValueTextBox2.Text & "'"
+                    'cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    'paramvalue = cmd.ExecuteScalar
+                    'If paramvalue = 0 Then
+                    'cmd.Dispose()
+                    alue = ParamValueListBox.SelectedItems(0).Text
+
+                    sSqlQry = "Update CUSTOM_PARAMETERS set PARAM_VALUE = '" & NewParamValueTextBox2.Text & "', FILT1 = '" & FILT1TextBox.Text & "', FILT2 = '" & FILT2TextBox.Text & "', FILT3 = '" & FILT3TextBox.Text & "', FILT4 = '" & FILT4TextBox.Text & "', FILT5 = '" & FILT5TextBox.Text & "' " &
+                                " where PARAM_TYPE = '" & paramtype & "' and  PARAM_VALUE = '" & alue & "'"
+                    cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    cmd.ExecuteNonQuery()
+                    cmd.Dispose()
+                    ParamValueListBox.Items.Clear()
+                    SearchParamCommandButton1_Click()
+                    NewParamTypeTextBox1.Text = ""
+                    NewParamValueTextBox2.Text = ""
+                    FILT1TextBox.Text = ""
+                    FILT2TextBox.Text = ""
+                    FILT3TextBox.Text = ""
+                    FILT4TextBox.Text = ""
+                    FILT5TextBox.Text = ""
+                    MsgBox("Parameter value updated", vbInformation, "INFO")
+                    'Else
+                    '    cmd.Dispose()
+                    '    MsgBox("Parameter value already exists", vbInformation)
+                    'End If
+                    GoTo Done
+                End If
+                '   End If
+                'Next iCnt
+                If String.IsNullOrEmpty(NewParamTypeTextBox1.Text) = False Then
+                    counter = counter + 1
+                    paramtype = CallTypeComboBox.Text
+                    sSqlQry = "Select count(*) FROM CUSTOM_PARAMETERS where PARAM_TYPE = '" & NewParamTypeTextBox1.Text & "'"
+                    cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    paramvalue = cmd.ExecuteScalar
+                    If paramvalue = 0 Then
+                        cmd.Dispose()
+                        sSqlQry = "Update CUSTOM_PARAMETERS set PARAM_TYPE = '" & NewParamTypeTextBox1.Text & "', FILT1 = '" & FILT1TextBox.Text & "', FILT2 = '" & FILT2TextBox.Text & "', FILT3 = '" & FILT3TextBox.Text & "', FILT4 = '" & FILT4TextBox.Text & "', FILT5 = '" & FILT5TextBox.Text & "' " &
+                                " where PARAM_TYPE = '" & paramtype & "'"
+                        cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                        cmd.ExecuteNonQuery()
+                        cmd.Dispose()
+                        ParamValueListBox.Items.Clear()
+                        paratypelistboxpopulate()
+                        CallTypeComboBox.Text = NewParamTypeTextBox1.Text
+                        SearchParamCommandButton1_Click()
+                        NewParamTypeTextBox1.Text = ""
+                        NewParamValueTextBox2.Text = ""
+                        FILT1TextBox.Text = ""
+                        FILT2TextBox.Text = ""
+                        FILT3TextBox.Text = ""
+                        FILT4TextBox.Text = ""
+                        FILT5TextBox.Text = ""
+                        MsgBox("Parameter type updated", vbInformation, "INFO")
+                    Else
+                        MsgBox("Parameter type already exists", vbInformation, "ALERT")
+                    End If
+                End If
+                'disconnectFromDB(GlobalVariables.CONN)
+            Else
+                MsgBox("Parameter Type is empty", vbInformation, "ERROR")
+                GoTo Done
+            End If
+        Catch ex As Exception
+            MsgBox("Error: " & ex.Message,, "ERROR")
+        Finally
+            disconnectFromDB(GlobalVariables.CONN)
+        End Try
+Done:
+        disconnectFromDB(GlobalVariables.CONN)
+    End Sub
+
+    Private Sub ResetCommandButton1_Click(sender As Object, e As EventArgs) Handles ResetCommandButton1.Click
+        NewParamTypeTextBox1.Text = ""
+        NewParamValueTextBox2.Text = ""
+        ParamValueListBox.Items.Clear()
+        FILT1TextBox.Text = ""
+        FILT2TextBox.Text = ""
+        FILT3TextBox.Text = ""
+        FILT4TextBox.Text = ""
+        FILT5TextBox.Text = ""
+
+        CallTypeComboBox.SelectedIndex = -1
+
+
+    End Sub
+
+    Private Sub UserNameComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles UserNameComboBox.SelectedIndexChanged
+        clearAllFields()
+    End Sub
+    Private Sub UploadCMIngestionCommandButton_Click(sender As Object, e As EventArgs) Handles UploadCMIngestionCommandButton.Click
+        Dim Temp As String
+        Dim filepath As String
+        Dim filename As String
+        Dim Directory As String
+        Dim reader As OleDbDataReader
+        Dim CONN3 As Object
+        Dim cmd As OleDbCommand
+        Dim cmdExcl As OleDbCommand
+        Dim Exapp As Excel.Application
+        Dim WBook As Excel.Workbook
+        Dim WSheet As Excel.Worksheet
+        Dim WSheet1 As Excel.Worksheet
+        Dim temprange As Excel.Range
+        Dim lastrow As Long
+        Dim lastrow1 As Long
+        Dim cnt As Long
+        Dim xlCells As Excel.Range = Nothing
+        Dim readerExcl As OleDbDataReader
+        Dim cmdCMI As OleDbCommand
+        Dim readerCMI As OleDbDataReader
+        Dim cmdInsert As OleDbCommand
+        Dim readerInsert As OleDbDataReader
+        Dim cmdUpdate As OleDbCommand
+        Dim readerUpdate As OleDbDataReader
+        Dim MultiplecaseIDflag As Boolean
+        Dim row As Long
+        Dim DBPATH1 As String
+
+        Try
+            If CMIngestionInputFileTextBox.Text = "" Then
+                MsgBox("No files selected !", vbInformation, "ERROR")
+                GoTo Done
+            End If
+
+            '
+            Temp = CMIngestionInputFileTextBox.Text
+            filename = Path.GetFileName(Temp)
+            Directory = Path.GetDirectoryName(Temp)
+            filepath = Directory & "\" & filename
+            'connectToDB(GlobalVariables.CONN, GlobalVariables.DBPATHAM, "MSAccess")
+            'sSqlQry = "Drop table CMIngestion"
+            'cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            'reader = cmd.ExecuteReader
+            'closeRecordSet(cmd, reader)
+            'disconnectFromDB(GlobalVariables.CONN)
+            connectToDB(CONN3, filepath, "Excel")
+            sSqlQry = "Select * From [Sheet1$] Where ISNULL(Case_ID) = False"
+            cmdExcl = New OleDbCommand(sSqlQry, CONN3)
+            readerExcl = cmdExcl.ExecuteReader
+            If readerExcl.HasRows Then
+            Else
+                MsgBox("Input File appears to be empty", vbExclamation, "Error")
+                GoTo Done
+            End If
+            disconnectFromDB(CONN3)
+            connectToDB(CONN3, filepath, "Excel")
+            DBPATH1 = "\\Svrau100qsm00\otspm grppo\SHARE\GSO Projects\Projects\GTIR\5.2 GTIR CoE\10. GTIR CRS DS (Restricted)\1. Data Team (Restricted)\1.2 EC Teams\1.2.2 NZ EC Team\Project-External Reporting\03. Design & Development\Dev\ER BAU FATCA CRS MASTER.accdb"
+            sSqlQry = "Select [Customer_Id],[Case_Id],[Verbal_SC] INTO [MS Access;Database=" & DBPATH1 & "].[CMIngestion] " _
+                      & " from [Sheet1$] Where ISNULL(Case_ID) = False and ISNULL(Verbal_SC) = False"
+            cmd = New OleDbCommand(sSqlQry, CONN3)
+            cmd.ExecuteNonQuery()
+            cmd.Dispose()
+            disconnectFromDB(CONN3)
+            connectToDB(GlobalVariables.CONN, DBPATH1, "MSAccess")
+            sSqlQry = "Select * from CMIngestion"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+            If reader.HasRows Then
+                row = 1
+                While reader.Read
+                    sSqlQry = "Select * from CMIngestion1"
+                    cmdCMI = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                    readerCMI = cmd.ExecuteReader
+                    If row = 1 Then GoTo skip
+                    If readerCMI.HasRows Then
+                        While readerCMI.Read
+                            If reader.Item(0) = readercmi.item(0) Then
+                                MultipleCaseIDFlag = True
+                            End If
+                        End While
+                        If multiplecaseIDFlag = False Then
+Skip:
+                            sSqlQry = "Insert into CMIngestion1(Customer_ID,Case_ID,Verbal_SC) values( " & reader.Item(0) & "," & reader.Item(1) & "," & reader.Item(2) & ")"
+                            cmdInsert = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                            readerInsert = cmd.ExecuteReader
+                            closeRecordSet(cmdInsert, readerInsert)
+                        ElseIf multiplecaseIDFlag = True Then
+                            sSqlQry = "Update into CMIngestion1 set Case_ID = Case_ID" & "|" & reader.Item(1) & "where Customer_ID= " & reader.Item(0)
+                            cmdUpdate = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+                            readerUpdate = cmd.ExecuteReader
+                            closeRecordSet(cmdUpdate, readerUpdate)
+                        End If
+                    End If
+                    row = row + 1
+                    closeRecordSet(cmdCMI, readerCMI)
+                End While
+            End If
+            closeRecordSet(cmd, reader)
+            sSqlQry = "Update VERBALSC_TRACKER As a INNER JOIN CMIngestion1 As b On a.Customer_Id=b.Customer_Id Set a.Case_Id = iif(a.Case_Id=empty,b.Case_Id,a.Case_id" & "|" & "b.Case_Id)," _
+                       & " a.Verbal_SC = iif(a.Verbal_SC=b.Verbal_SC,b.Verbal_SC,iif(a.Verbal_SC=empty,b.Verbal_SC,empty));"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+            closeRecordSet(cmd, reader)
+            sSqlQry = "Drop table CMIngestion"
+            cmd = New OleDbCommand(sSqlQry, GlobalVariables.CONN)
+            reader = cmd.ExecuteReader
+            closeRecordSet(cmd, reader)
+            disconnectFromDB(GlobalVariables.CONN)
+            MsgBox("Upload complete")
+Done:
+            disconnectFromDB(CONN3)
+        Catch ex As Exception
+            disconnectFromDB(CONN3)
+            MsgBox(ex.Message, vbInformation, "ERROR")
+        End Try
+    End Sub
+    Private Sub GetCMIngestionFileCommandButton_Click(sender As Object, e As EventArgs) Handles GetCMIngestionFileCommandButton.Click
+        Dim LastDir As String
+        Dim i As Integer
+        Try
+            CMIngestionInputFileTextBox.Text = ""
+            OpenFileDialog1.Multiselect = True
+            OpenFileDialog1.Filter = "EXCEL Files|*.xlsx"
+            i = 1
+            If OpenFileDialog1.ShowDialog = Windows.Forms.DialogResult.OK Then
+                CMIngestionInputFileTextBox.Text = OpenFileDialog1.FileName
+                LastDir = Path.GetDirectoryName(OpenFileDialog1.FileName)
+                For Each mFile As String In OpenFileDialog1.FileNames
+                    If i <> 1 Then
+                        CMIngestionInputFileTextBox.Text = CMIngestionInputFileTextBox.Text & vbCrLf & mFile
+                    End If
+                    i = i + 1
+                Next
+            End If
+Done:
+
+        Catch ex As Exception
+            MsgBox(ex.Message, vbInformation, "ERROR")
+        End Try
+    End Sub
+
+End Class
+Public Class GlobalVariables
+    Public Shared DBPATHAM As String
+    Public Shared MASTERDB As String
+    Public Shared DBPATHCOUNTRY As String
+    Public Shared CURRENTDB As String
+    Public Shared WORKINGDB As String
+    Public Shared CONN As OleDbConnection
+    Public Shared CONN1 As OleDbConnection
+    Public Shared USERLANID As String
+    Public Shared USERFULLNAME As String
+    Public Shared AlreadyUsed As Boolean
+    Public Shared LINE_NO_TEXT As String
+    Public Shared HISTINDTABLE As String
+    Public Shared HISTENTTABLE As String
+    Public Shared LINKEDCASESTABLE As String
+    Public Shared HIST_CASE_ID As String
+    Public Shared COUNTRY As String
+    Public Shared BOTHCOUNTRIES As Boolean
+    Public Shared COUNTRYPRE As String
+    Public Shared COUNTRYCAP As String
+    Public Shared ESCALATIONSTABLE As String
+    Public Shared CUSTOMERTABLE As String
+    Public Shared CONVERSATIONTABLE As String
+    Public Shared PROGVER As String
+    Public Shared DBPATH As String
+    Public Shared FOUNDAU As Boolean
+    Public Shared FOUNDNZ As Boolean
+    Public Shared CC_CONVERSATION As String
+    Public Shared CC_CUSTOMER As String
+    'Public Shared FILTOUTCOME() As String
+    Public Shared FUTURERESTAINT As Boolean
+    Public Shared ONHOLDCASE As Boolean
+    Public Shared CAMPCASE As Boolean
+    Public Shared CAMPAIGNNAME As String
+    Public Shared CAMPAIGNID As Integer
+    Public Shared ECUST_ID As String
+    Public Shared ECASE_ID As String
+    Public Shared RUNONCE As Boolean ' Checks if the campaign list is populated by dropdown or by code. Helps preserve the CAMPAIGNNAME Gobal variable
+    Public Shared INDEXER As Integer
+    Public Shared LOADEDFROMESCALATION As Boolean 'Flag to set the escalation checkbox
+    Public Shared TROFAUPDATED As Boolean
+    Public Shared TROFAUPDATEREQUIRED As Boolean
+End Class
